@@ -1,4 +1,4 @@
-# zora
+# BLU Skill Guide
 
 ## Project setup
 ```
