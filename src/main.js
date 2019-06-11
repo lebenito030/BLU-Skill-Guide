@@ -1,8 +1,9 @@
 import Vue from 'vue'
-import { Card } from 'ant-design-vue'
+import { Card, Radio } from 'ant-design-vue'
 import App from './App.vue'
 
 Vue.use(Card)
+Vue.use(Radio)
 
 Vue.config.productionTip = false
 

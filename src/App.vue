@@ -1,8 +1,17 @@
 <template>
   <div id="app">
-    <nav></nav>
-    <div class="cards">
-      <div class="card incomplete" v-for="(magic, index) in magicList" v-if="magic['完成情况'] === 'false'" :key="magic['编号']">
+    <header class="navbar">
+      <span>BLU Skill Guide</span>
+      <a-radio-group @change="changeSort" buttonStyle="solid" defaultValue="全部">
+        <a-radio-button value="全部">全部</a-radio-button>
+        <a-radio-button value="野外">野外</a-radio-button>
+        <a-radio-button value="副本">副本</a-radio-button>
+        <a-radio-button value="讨伐歼灭战">讨伐歼灭战</a-radio-button>
+      </a-radio-group>
+    </header>
+    <main class="cards">
+      <!-- eslint-disable-next-line -->
+      <div class="card incomplete" v-for="(magic, index) in magicList" v-if="magic['完成情况'] === 'false' && checkSort(magic['类型'], sortBy)" :key="magic['编号']">
         <Card
           @click.native="changeStatus(index)" 
           :magicId="magic['编号']" 
@@ -13,7 +22,8 @@
           :isLearned="magic['完成情况']">
         </Card>
       </div>
-      <div class="card" v-for="(magic, index) in magicList" v-if="magic['完成情况'] === 'true'" :key="magic['编号']">
+      <!-- eslint-disable-next-line -->
+      <div class="card" v-for="(magic, index) in magicList" v-if="magic['完成情况'] === 'true' && checkSort(magic['类型'], sortBy)" :key="magic['编号']">
         <Card
           @click.native="changeStatus(index)" 
           :magicId="magic['编号']" 
@@ -24,7 +34,10 @@
           :isLearned="magic['完成情况']">
         </Card>
       </div>
-    </div>
+    </main>
+    <footer>
+      Copyright © 2019 <a href="https://github.com/Mcskiller">Mcskiller</a>. All rights reserved.
+    </footer>
   </div>
 </template>
 
@@ -39,7 +52,22 @@ export default {
   },
   data() {
     return {
-      magicList: null
+      magicList: null,
+      sortBy: '全部'
+    }
+  },
+  methods: {
+    changeStatus: function(index) {
+      if(this.magicList[index]['完成情况'] === 'false') return this.magicList[index]['完成情况'] = 'true';
+      if(this.magicList[index]['完成情况'] === 'true') return this.magicList[index]['完成情况'] = 'false';
+    },
+    changeSort: function(e) {
+      this.sortBy = e.target.value;
+    },
+    checkSort: function(item, sortBy) {
+      if(sortBy === '全部') return true;
+      if(sortBy === item) return true;
+      return false;
     }
   },
   beforeCreate() {
@@ -50,14 +78,8 @@ export default {
   },
   updated() {
     localStorage.setItem('BLUData', JSON.stringify(this.magicList));
-  },
-  methods: {
-    changeStatus: function(index) {
-      if(this.magicList[index]['完成情况'] === 'false') return this.magicList[index]['完成情况'] = 'true';
-      if(this.magicList[index]['完成情况'] === 'true') return this.magicList[index]['完成情况'] = 'false';
-      }
-    }
   }
+}
 </script>
 
 <style>
@@ -71,7 +93,19 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+.navbar {
+  width: 100%;
+  height: 50px;
+  background-color: #FFF;
+  margin-bottom: 30px;
+  border-radius: 2px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 50px;
 }
 .cards {
   min-width: 320px;
@@ -96,6 +130,13 @@ body {
   }
 }
 @media screen and (max-width: 680px) {
+  .navbar {
+    justify-content: center;
+    padding: 0;
+  }
+  .navbar > span {
+    display: none;
+  }
   .cards {
     grid-template-columns: repeat(1, 1fr);
   }
